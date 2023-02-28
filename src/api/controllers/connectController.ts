@@ -1,6 +1,6 @@
 import { GameInstance } from '../../types';
 
-let game: GameInstance = {
+export let GAME: GameInstance = {
 	playersConnected: 0,
 	prompt: 'all I want for christmas is you',
 	players: [
@@ -8,6 +8,7 @@ let game: GameInstance = {
 		{ password: '1234', connected: false },
 	],
 	promptsSent: 0,
+	winnerDeclared: false,
 };
 
 const SAMPLE_GAME: GameInstance = {
@@ -18,6 +19,7 @@ const SAMPLE_GAME: GameInstance = {
 		{ password: '1234', connected: false },
 	],
 	promptsSent: 0,
+	winnerDeclared: false,
 };
 
 function getVisitNumberInSecond(date: Date, lastAccess: number): number {
@@ -29,9 +31,9 @@ function getVisitNumberInSecond(date: Date, lastAccess: number): number {
 }
 
 function getPlayer(password: string): number {
-	if (password === game.players[0].password) {
+	if (password === GAME.players[0].password) {
 		return 0;
-	} else if (password === game.players[1].password) {
+	} else if (password === GAME.players[1].password) {
 		return 1;
 	} else {
 		return -1;
@@ -54,31 +56,32 @@ export function connectController(req: any, res: any): void {
 	const { password } = req.body;
 	const player = getPlayer(password);
 
-	if (player === 0 && !game.players[0].connected) {
-		game.playersConnected++;
-		game.players[0].connected = true;
+	if (player === 0 && !GAME.players[0].connected) {
+		GAME.playersConnected++;
+		GAME.players[0].connected = true;
 	}
-	if (player === 1 && !game.players[1].connected) {
-		game.playersConnected++;
-		game.players[1].connected = true;
+	if (player === 1 && !GAME.players[1].connected) {
+		GAME.playersConnected++;
+		GAME.players[1].connected = true;
 	}
 
-	if (game.playersConnected === 2 && player !== -1) {
+	if (GAME.playersConnected === 2 && player !== -1) {
 		if (
-			(visitNumberInSecond === 1 && game.promptsSent === 0) ||
-			(visitNumberInSecond === 2 && game.promptsSent === 1)
+			(visitNumberInSecond === 1 && GAME.promptsSent === 0) ||
+			(visitNumberInSecond === 2 && GAME.promptsSent === 1)
 		) {
 			const connectResponse: ConnectResponse = {
 				starting: true,
 				player_id: player,
-				msg: game.prompt,
+				msg: GAME.prompt,
 			};
 
 			res.send(connectResponse);
-			game.promptsSent++;
+			GAME.promptsSent++;
 
-			if (game.promptsSent >= 2) {
-				game = SAMPLE_GAME;
+			if (GAME.promptsSent >= 2) {
+				// DELETE THIS AT SOME POINT
+				resetGame();
 			}
 		} else {
 			const connectResponse: ConnectResponse = {
@@ -94,4 +97,8 @@ export function connectController(req: any, res: any): void {
 		};
 		res.send(connectResposne);
 	}
+}
+
+export function resetGame() {
+	GAME = SAMPLE_GAME;
 }

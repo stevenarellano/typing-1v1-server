@@ -3,7 +3,7 @@ const http = require('http');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 import { Server } from 'socket.io';
-import { connectController } from './api';
+import { GAME, connectController, resetGame } from './api';
 
 const PORT = process.env.PORT || 8080;
 
@@ -21,6 +21,43 @@ app.get('/', (req: any, res: any) => {
 
 app.post('/connect', (req: any, res: any) => {
 	connectController(req, res);
+});
+
+interface FinishedRequest {
+	player_id: number;
+	wpm: number;
+}
+interface FinishedResponse {
+	winner: boolean;
+}
+app.post('/finished', (req: any, res: any) => {
+	const { player_id } = req.body as FinishedRequest;
+
+	const finishedResponse: FinishedResponse = {
+		winner: true,
+	};
+	// io.emit('finished', player_id);
+	console.log(`Player ${player_id} finished!`);
+
+	if (!GAME.winnerDeclared) {
+		GAME.winnerDeclared = true;
+		res.send(finishedResponse);
+	} else {
+		finishedResponse.winner = false;
+		res.send(finishedResponse);
+		resetGame();
+	}
+});
+
+interface MilestoneRequest {
+	player_id: number;
+	milestone: number;
+}
+app.post('/milestone', (req: any, res: any) => {
+	const { player_id, milestone } = req.body as MilestoneRequest;
+	// io.emit('finished', player_id);
+	console.log(`Player ${player_id} reached milestone ${milestone} !`);
+	res.send(`Player ${player_id} reached milestone ${milestone}!`);
 });
 
 app.get('/api', (req: any, res: any) => {
