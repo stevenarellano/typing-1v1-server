@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 import { Server } from 'socket.io';
 import { connectController } from './api';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 const app = express();
 
@@ -34,5 +34,5 @@ io.on('connection', (socket: any) => {
 });
 
 server.listen(PORT, () => {
-	console.log('listening on PORT: 3000');
+	console.log(`Server running on port ${PORT}`);
 });
