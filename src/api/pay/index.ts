@@ -1,0 +1,1 @@
+export { payRouter } from './payRouter';
