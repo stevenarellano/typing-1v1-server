@@ -3,10 +3,16 @@ const http = require('http');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 import { Server } from 'socket.io';
-import { GAME, connectController, resetGame } from './api';
+import { connectController } from './api';
+import { GAME, resetGame } from './context';
+import {
+	FinishedRequest,
+	FinishedResponse,
+	MilestoneRequest,
+	Players,
+} from './types';
 
 const PORT = process.env.PORT || 8080;
-
 const app = express();
 
 app.use(cors());
@@ -15,21 +21,12 @@ app.use(bodyParser.json());
 const server = http.createServer(app);
 const io: Server = new Server(server);
 
-app.get('/', (req: any, res: any) => {
-	res.send('Hello World');
-});
+/* GETS */
+app.get('/', (req: any, res: any) => res.send('Hello World'));
 
-app.post('/connect', (req: any, res: any) => {
-	connectController(req, res);
-});
+/* POSTS */
+app.post('/connect', (req: any, res: any) => connectController(req, res));
 
-interface FinishedRequest {
-	player_id: number;
-	wpm: number;
-}
-interface FinishedResponse {
-	winner: boolean;
-}
 app.post('/finished', (req: any, res: any) => {
 	const { player_id } = req.body as FinishedRequest;
 
@@ -40,19 +37,17 @@ app.post('/finished', (req: any, res: any) => {
 	console.log(`Player ${player_id} finished!`);
 
 	if (!GAME.winnerDeclared) {
+		console.log(`Player ${player_id} is the winner!`);
 		GAME.winnerDeclared = true;
 		res.send(finishedResponse);
 	} else {
+		console.log(`Player ${player_id} finished second. Resetting game.`);
 		finishedResponse.winner = false;
 		res.send(finishedResponse);
-		resetGame();
+		resetGame(GAME.players[0].password, GAME.players[1].password);
 	}
 });
 
-interface MilestoneRequest {
-	player_id: number;
-	milestone: number;
-}
 app.post('/milestone', (req: any, res: any) => {
 	const { player_id, milestone } = req.body as MilestoneRequest;
 	// io.emit('finished', player_id);
@@ -60,14 +55,14 @@ app.post('/milestone', (req: any, res: any) => {
 	res.send(`Player ${player_id} reached milestone ${milestone}!`);
 });
 
-app.get('/api', (req: any, res: any) => {
-	console.log('this ran');
-	io.emit('api', 'It works!!!');
-	res.send('good job');
-});
-
 io.on('connection', (socket: any) => {
 	console.log(`a user connected: ${socket.id}`);
+
+	socket.on('reset_game', (arg: Players) => {
+		console.log('resetting game with arg: ', arg);
+		resetGame(arg.player1, arg.player2);
+		console.log(GAME);
+	});
 });
 
 server.listen(PORT, () => {
