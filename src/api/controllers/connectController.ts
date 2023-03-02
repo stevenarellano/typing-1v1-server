@@ -9,6 +9,7 @@ let visitNumberInSecond = 1;
 let lastAccess = new Date().getSeconds();
 
 export function connectController(req: any, res: any): void {
+	console.log(req.body);
 	const date = new Date();
 	visitNumberInSecond = getVisitNumberInSecond(date, lastAccess);
 	lastAccess = date.getSeconds();
