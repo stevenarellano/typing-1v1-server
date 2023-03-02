@@ -5,7 +5,9 @@
 	"license": "MIT",
 	"scripts": {
 		"start": "ts-node src/index.ts",
-		"dev": "nodemon -x ts-node src/index.ts"
+		"dev": "nodemon -x ts-node src/index.ts",
+		"build": "tsc",
+		"postinstall": "yarn run build"
 	},
 	"dependencies": {
 		"@types/socket.io": "^3.0.2",
