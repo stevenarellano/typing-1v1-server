@@ -7,8 +7,7 @@
 		"start": "ts-node src/index.ts",
 		"start:prod": "tsc && node dist/index.js",
 		"dev": "nodemon -x ts-node src/index.ts",
-		"build": "tsc",
-		"postinstall": "yarn && yarn run start"
+		"build": "tsc"
 	},
 	"dependencies": {
 		"@types/socket.io": "^3.0.2",
