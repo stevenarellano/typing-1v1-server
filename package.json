@@ -4,8 +4,7 @@
 	"main": "src/index.ts",
 	"license": "MIT",
 	"scripts": {
-		"start": "ts-node src/index.ts",
-		"start:prod": "tsc && ts-node src/index.ts",
+		"start": "tsc && ts-node src/index.ts",
 		"dev": "nodemon -x ts-node src/index.ts",
 		"build": "tsc",
 		"postinstall": "yarn && yarn run start"
