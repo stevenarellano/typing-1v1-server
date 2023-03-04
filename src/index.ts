@@ -56,11 +56,13 @@ app.post('/milestone', (req: any, res: any) => {
 	const { data } = req.body as MilestoneRequest;
 	const milestone_payload = data;
 
+	console.log('before split: ', milestone_payload);
 	const [_, player_id, milestone] = milestone_payload.split(':');
-	console.log('milestone payload: ', milestone_payload);
+	console.log('before io.emit: ', milestone_payload);
 
 	io.emit('milestone', milestone_payload);
-	res.send(`Player ${player_id} reached milestone ${milestone}!`);
+	console.log('before send: ', milestone_payload);
+	res.send({ key: `Player ${player_id} reached milestone ${milestone}!` });
 });
 
 io.on('connection', (socket: any) => {
