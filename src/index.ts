@@ -38,7 +38,7 @@ app.post('/finished', (req: any, res: any) => {
 	const finishedResponse: FinishedResponse = {
 		winner: true,
 	};
-	io.emit(`finished:${player_id}`, `finished:${player_id}`);
+	io.emit('finished', player_id);
 	if (!GAME.winnerDeclared) {
 		console.log(`Player ${player_id} is the winner!`);
 		GAME.winnerDeclared = true;
@@ -60,7 +60,7 @@ app.post('/milestone', (req: any, res: any) => {
 	const [_, player_id, milestone] = milestone_payload.split(':');
 	console.log('before io.emit: ', milestone_payload);
 
-	io.emit(milestone_payload, milestone_payload);
+	io.emit('milestone', milestone_payload);
 	console.log('before send: ', milestone_payload);
 	res.send({ key: `Player ${player_id} reached milestone ${milestone}!` });
 });
