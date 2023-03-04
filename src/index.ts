@@ -53,7 +53,8 @@ app.post('/finished', (req: any, res: any) => {
 
 app.post('/milestone', (req: any, res: any) => {
 	console.log('/milestone, req: ', req.body, 'typeof: ', typeof req.body);
-	const milestone_payload = req.body as MilestoneRequest;
+	const { data } = req.body as MilestoneRequest;
+	const milestone_payload = data;
 
 	const [_, player_id, milestone] = milestone_payload.split(':');
 	console.log('milestone payload: ', milestone_payload);
