@@ -24,7 +24,8 @@ const io: Server = new Server(server);
 /* GETS */
 app.get('/', (req: any, res: any) => res.send('Hello World'));
 app.get('/miss', (req: any, res: any) => {
-	io.emit('miss');
+	console.log('/miss');
+	io.emit('miss', 'miss');
 	res.send('nice');
 });
 
@@ -51,6 +52,7 @@ app.post('/finished', (req: any, res: any) => {
 });
 
 app.post('/milestone', (req: any, res: any) => {
+	console.log('/milestone, req: ', req.body, 'typeof: ', typeof req.body);
 	const milestone_payload = req.body as MilestoneRequest;
 
 	const [_, player_id, milestone] = milestone_payload.split(':');
