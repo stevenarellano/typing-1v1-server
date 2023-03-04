@@ -23,7 +23,10 @@ const io: Server = new Server(server);
 
 /* GETS */
 app.get('/', (req: any, res: any) => res.send('Hello World'));
-app.get('/miss', (req: any, res: any) => io.emit('miss'));
+app.get('/miss', (req: any, res: any) => {
+	io.emit('miss');
+	res.send('nice');
+});
 
 /* POSTS */
 app.post('/connect', (req: any, res: any) => connectController(req, res));
