@@ -23,6 +23,7 @@ const io: Server = new Server(server);
 
 /* GETS */
 app.get('/', (req: any, res: any) => res.send('Hello World'));
+app.get('/miss', (req: any, res: any) => io.emit('miss'));
 
 /* POSTS */
 app.post('/connect', (req: any, res: any) => connectController(req, res));
@@ -33,9 +34,7 @@ app.post('/finished', (req: any, res: any) => {
 	const finishedResponse: FinishedResponse = {
 		winner: true,
 	};
-	// io.emit('finished', player_id);
-	console.log(`Player ${player_id} finished!`);
-
+	io.emit('finished', `finished:${player_id}`);
 	if (!GAME.winnerDeclared) {
 		console.log(`Player ${player_id} is the winner!`);
 		GAME.winnerDeclared = true;
@@ -49,9 +48,12 @@ app.post('/finished', (req: any, res: any) => {
 });
 
 app.post('/milestone', (req: any, res: any) => {
-	const { player_id, milestone } = req.body as MilestoneRequest;
-	// io.emit('finished', player_id);
-	console.log(`Player ${player_id} reached milestone ${milestone} !`);
+	const milestone_payload = req.body as MilestoneRequest;
+
+	const [_, player_id, milestone] = milestone_payload.split(':');
+	console.log('milestone payload: ', milestone_payload);
+
+	io.emit('milestone', milestone_payload);
 	res.send(`Player ${player_id} reached milestone ${milestone}!`);
 });
 
@@ -61,7 +63,6 @@ io.on('connection', (socket: any) => {
 	socket.on('reset_game', (arg: Players) => {
 		console.log('resetting game with arg: ', arg);
 		resetGame(arg.player1, arg.player2);
-		console.log(GAME);
 	});
 });
 

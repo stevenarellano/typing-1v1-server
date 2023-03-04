@@ -1,7 +1,4 @@
-export interface MilestoneRequest {
-	player_id: number;
-	milestone: number;
-}
+export type MilestoneRequest = string;
 export interface FinishedRequest {
 	player_id: number;
 	wpm: number;
